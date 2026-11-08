@@ -1,0 +1,7 @@
+[project]
+name = "unit_convert"
+version = "0.1.0"
+
+[tool.flet]
+org = "com.eng"
+product = "工程单位换算器"
