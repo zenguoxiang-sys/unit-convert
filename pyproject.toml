@@ -1,15 +1,14 @@
-
 [project]
 name = "unit-convert"
 version = "1.0.0"
-description = "工程单位换算器"
+description = "Engineering Unit Converter"
 requires-python = ">=3.10"
 dependencies = [
   "flet>=0.24.0"
 ]
 
 [tool.flet]
-app-name = "工程单位换算器"
+app-name = "UnitConvert"
 org = "com.zeng"
 bundle-id = "com.zeng.unitconvert"
 android-min-sdk = 21
