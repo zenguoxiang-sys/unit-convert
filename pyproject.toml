@@ -1,15 +1,10 @@
 [project]
 name = "unit-convert"
-version = "1.0.0"
+version = "0.1.0"
 description = "工程单位转换器"
 requires-python = ">=3.10"
-dependencies = [
-  "flet>=0.24.0"
-]
 
 [tool.flet]
-app-name = "单位换算器"
-app-version = "1.0.0"
-app-build-number = "1"
-bundle-id = "com.eng.unitconvert"
-main = "unit_convert.py"
+app-name = "UnitConvert"
+org = "com.eng"
+android-min-sdk = 21
