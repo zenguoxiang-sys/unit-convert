@@ -7,53 +7,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      PUB_HOSTED_URL: https://pub.flutter-io.cn
-      FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
-      - name: Setup Java 17
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Configure gradle aliyun mirror
-        run: |
-          mkdir -p ~/.gradle/init.d
-          cat > ~/.gradle/init.d/aliyun.gradle <<'EOF'
-allprojects {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        mavenCentral()
-    }
-    buildscript {
-        repositories {
-            maven { url 'https://maven.aliyun.com/repository/google' }
-            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-            maven { url 'https://maven.aliyun.com/repository/public' }
-        }
-    }
-}
-EOF
+          java-version: "17"
+          distribution: "temurin"
 
       - name: Install flet
         run: pip install flet
 
-      # 这里 main.py 换成你的py文件名！
       - name: Build APK
-        run: flet build apk main.py --verbose
+        run: flet build apk
 
-      - name: Upload built APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: unit-convert-apk
-          path: build/apk/app-release.apk
+          name: UnitConvert-apk
+          path: build/apk/*.apk
