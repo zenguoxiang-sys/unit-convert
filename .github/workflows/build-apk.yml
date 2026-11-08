@@ -18,20 +18,42 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Java 17
+      - name: Install Java‑17
         run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
-          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+          sudo apt‑get update
+          sudo apt‑get install ‑y openjdk‑17‑jdk
+          echo "JAVA_HOME=/usr/lib/jvm/java‑17‑openjdk‑amd64" >> $GITHUB_ENV
 
-      - name: Install Flet
+      # 关键：写入Gradle全局阿里云镜像，解决安卓依赖下载超时
+      - name: Configure gradle aliyun mirror
+        run: |
+          mkdir -p ~/.gradle/init.d
+          cat > ~/.gradle/init.d/aliyun.gradle <<'EOF'
+allprojects {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        mavenCentral()
+    }
+    buildscript {
+        repositories {
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+            maven { url 'https://maven.aliyun.com/repository/public' }
+        }
+    }
+}
+EOF
+
+      - name: Install flet
         run: pip install flet
 
       - name: Build APK
         run: flet build apk --verbose
 
-      - name: Upload APK
+      - name: Upload built APK
         uses: actions/upload-artifact@v4
         with:
-          name: unit-convert-apk
-          path: build/apk/app-release.apk
+          name: unit‑convert‑apk
+          path: build/apk/app‑release.apk
