@@ -1,59 +1,35 @@
-name: Build Flet APK
+name: Build Android APK
+
+# 手动触发：Actions → Build Android APK → Run workflow
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  apk:
     runs-on: ubuntu-latest
-    env:
-      PUB_HOSTED_URL: https://pub.flutter-io.cn
-      FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+    timeout-minutes: 60
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: Configure gradle aliyun mirror
+      - name: Install Flet
         run: |
-          mkdir -p ~/.gradle/init.d
-          cat > ~/.gradle/init.d/aliyun.gradle <<'EOF'
-allprojects {
-  repositories {
-    maven { url 'https://maven.aliyun.com/repository/google' }
-    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-    maven { url 'https://maven.aliyun.com/repository/public' }
-    mavenCentral()
-  }
-  buildscript {
-    repositories {
-      maven { url 'https://maven.aliyun.com/repository/google' }
-      maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-      maven { url 'https://maven.aliyun.com/repository/public' }
-    }
-  }
-}
-EOF
+          python -m pip install --upgrade pip
+          pip install "flet[all]==1.1.2"
 
-      - name: Install flet
-        run: pip install flet
+      - name: Build APK (arm64)
+        run: |
+          flet build apk --yes --arch arm64-v8a \
+            --build-version 1.0.0 \
+            --build-number "${GITHUB_RUN_NUMBER}" \
+            --exclude tests --exclude "*.log" --exclude assets/fonts \
+            --log-format github
 
-      - name: Build APK
-        run: flet build apk
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: UnitConvert-apk
+          name: unit-convert-apk
           path: build/apk/*.apk
+          if-no-files-found: error

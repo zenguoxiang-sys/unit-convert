@@ -1,15 +1,21 @@
 [project]
-name = "unit-convert"
+name = "unit-converter"
 version = "1.0.0"
-description = "Engineering Unit Converter"
+description = "工程单位换算器：长度 / 面积 / 质量 / 力 / 扭矩 / 温度 / 热量 / 流量 / 功率 / 压强"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "flet>=0.24.0"
+  "flet>=1.1.2,<2.0",
 ]
 
 [tool.flet]
-app-name = "UnitConvert"
-org = "com.zeng"
-bundle-id = "com.zeng.unitconvert"
-android-min-sdk = 21
-main = "main.py"
+product = "工程单位换算器"
+company = "康宝曾国祥"
+copyright = "Copyright © 2026 康宝曾国祥"
+build_number = 1
+bundle_id = "com.zeng.unitconvert"
+
+[tool.flet.app]
+module = "main"
+
+# 不额外声明权限。Flet 默认会带 INTERNET 权限；本程序不联网，仅沿用默认配置。
