@@ -19,13 +19,25 @@ python3 -m pip install "flet==1.1.2"
 flet run main.py
 ```
 
-## 部署
+## 部署（GitHub Pages）
 
-推送到 `main` 分支后，GitHub Actions 会自动构建并发布到 GitHub Pages
-（`.github/workflows/deploy-pages.yml`）。
+网站就是 `docs/` 目录里的静态文件，用 Pages 的 **Deploy from a branch** 发布：
 
-第一次使用需要在仓库 **Settings → Pages → Build and deployment → Source**
-选择 **GitHub Actions**。
+1. 仓库 **Settings → Pages → Build and deployment**
+2. Source 选 **Deploy from a branch**
+3. Branch 选 `main`，目录选 **`/docs`**，保存
+4. 等 1 分钟，访问 https://zenguoxiang-sys.github.io/unit-convert/
+
+重新生成静态文件（在本地）：
+
+```bash
+flet build web --yes --no-cdn --base-url /unit-convert/
+python3 patch_web.py
+rm -rf docs && cp -R build/web docs && touch docs/.nojekyll
+```
+
+> `.github/workflows/deploy-pages.yml` 是另一种方案（Actions 构建后发布），
+> 需要手动触发，并确保 Pages 的 Source 选 **GitHub Actions**。
 
 ## 打安卓 APK
 

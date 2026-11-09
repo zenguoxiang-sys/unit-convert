@@ -1,9 +1,7 @@
 name: Deploy PWA to GitHub Pages
 
-# 每次 push 到 main，自动构建 Web 版并发布到 GitHub Pages
+# 手动触发：Actions → Deploy PWA to GitHub Pages → Run workflow
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
