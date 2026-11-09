@@ -30,20 +30,43 @@ jobs:
           python -m pip install --upgrade pip
           pip install "flet[all]==1.1.2"
 
+      # GitHub release 下载偶尔 504，提前用 curl 重试拉取，命中 flet 的缓存目录
+      - name: Cache Flet build template
+        run: |
+          mkdir -p "$HOME/.flet/cache/build-template/v1.1.2"
+          for i in 1 2 3 4 5; do
+            if curl -fL --retry 3 --retry-delay 3 \
+              -o "$HOME/.flet/cache/build-template/v1.1.2/flet-build-template.zip" \
+              "https://github.com/flet-dev/flet/releases/download/v1.1.2/flet-build-template.zip"; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
       - name: Build web
         run: |
-          flet build web --yes --no-cdn \
-            --base-url "/${{ github.event.repository.name }}/" \
-            --pwa-short-name "单位换算" \
-            --pwa-theme-color "#1565c0" \
-            --pwa-background-color "#0b4f8a" \
-            --build-version 1.0.0 \
-            --build-number "${GITHUB_RUN_NUMBER}"
+          for attempt in 1 2 3; do
+            echo "构建尝试 $attempt"
+            if flet build web --yes --no-cdn \
+              --base-url "/${{ github.event.repository.name }}/" \
+              --pwa-short-name "单位换算" \
+              --pwa-theme-color "#1565c0" \
+              --pwa-background-color "#0b4f8a" \
+              --build-version 1.0.0 \
+              --build-number "${GITHUB_RUN_NUMBER}"; then
+              exit 0
+            fi
+            sleep 20
+          done
+          exit 1
 
       - name: Patch iOS meta tags
         run: python3 patch_web.py
 
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
