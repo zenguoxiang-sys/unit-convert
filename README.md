@@ -21,23 +21,23 @@ flet run main.py
 
 ## 部署（GitHub Pages）
 
-网站就是 `docs/` 目录里的静态文件，用 Pages 的 **Deploy from a branch** 发布：
+`docs/` 是**轻量网页版**（纯 HTML/JS，约 35 KB，秒开、可离线），用 Pages 的
+**Deploy from a branch** 发布：
 
 1. 仓库 **Settings → Pages → Build and deployment**
 2. Source 选 **Deploy from a branch**
 3. Branch 选 `main`，目录选 **`/docs`**，保存
 4. 等 1 分钟，访问 https://zenguoxiang-sys.github.io/unit-convert/
 
-重新生成静态文件（在本地）：
+网页版的数据来自 `main.py`，改完代码后重新生成：
 
 ```bash
-flet build web --yes --no-cdn --base-url /unit-convert/
-python3 patch_web.py
-rm -rf docs && cp -R build/web docs && touch docs/.nojekyll
+python3 build_lite.py
+cp web-lite/index.html docs/index.html
 ```
 
-> `.github/workflows/deploy-pages.yml` 是另一种方案（Actions 构建后发布），
-> 需要手动触发，并确保 Pages 的 Source 选 **GitHub Actions**。
+> 之前那套 Flutter/Pyodide 的网页版（45 MB，首屏慢）已不再使用；
+> 源码和 APK 构建仍在 `.github/workflows/build-apk.yml`。
 
 ## 打安卓 APK
 
